@@ -1,0 +1,2 @@
+###CREATE USER
+POST http://localhost:4000/api/auth
