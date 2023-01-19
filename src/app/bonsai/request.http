@@ -1,2 +1,2 @@
 ###GET BONSAI
-GET http://localhost:3000/api/bonsai
+GET http://localhost:4000/api/bonsai

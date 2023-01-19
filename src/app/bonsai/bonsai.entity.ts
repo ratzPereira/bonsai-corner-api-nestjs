@@ -21,7 +21,7 @@ export class BonsaiEntity {
   bonsaiCreationDate: Date;
 
   @Column()
-  spicies: string;
+  species: string;
 
   @Column('text', { array: true })
   interventions: string[];
