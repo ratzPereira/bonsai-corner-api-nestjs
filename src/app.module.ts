@@ -1,4 +1,4 @@
-import { BonsaiModule } from '@app/bonsai/bonsai.module';
+import { BonsaiModule } from '@app/app/bonsai/bonsai.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import ormconfig from '@app/ormconfig'
