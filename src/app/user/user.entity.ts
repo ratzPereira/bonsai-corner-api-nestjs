@@ -13,7 +13,7 @@ export class User {
   password: string;
 
   @Column()
-  userName: string;
+  username: string;
 
   @Column({ default: '' })
   bio: string;
