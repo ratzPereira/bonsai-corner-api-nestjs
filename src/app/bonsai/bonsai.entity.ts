@@ -17,7 +17,7 @@ export class Bonsai {
   @Column('text', { array: true })
   images: string[];
 
-  @Column({ default: '' })
+  @Column({ default: '1900-01-01' })
   bonsaiCreationDate: Date;
 
   @Column()

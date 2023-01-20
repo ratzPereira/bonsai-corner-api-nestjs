@@ -1,2 +1,11 @@
 ###CREATE USER
 POST http://localhost:4000/api/auth
+content-type: application/json
+
+{
+    "user": {
+        "userName": "ratz",
+        "email": "test@test.com",
+        "password": "12345"
+ }
+}
