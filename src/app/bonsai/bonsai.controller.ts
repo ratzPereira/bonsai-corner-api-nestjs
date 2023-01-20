@@ -1,4 +1,4 @@
-import { BonsaiEntity } from './bonsai.entity';
+import { Bonsai } from './bonsai.entity';
 import { BonsaiService } from './bonsai.service';
 import { Controller, Get } from '@nestjs/common';
 
@@ -7,7 +7,7 @@ export class BonsaiController {
   constructor(private bonsaiService: BonsaiService) {}
 
   @Get()
-  getAllBonsai(): Promise<BonsaiEntity[]> {
+  getAllBonsai(): Promise<Bonsai[]> {
     return this.bonsaiService.getAll();
   }
 }

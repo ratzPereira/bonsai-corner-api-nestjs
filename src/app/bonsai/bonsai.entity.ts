@@ -1,7 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'bonsais' })
-export class BonsaiEntity {
+export class Bonsai {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,7 +17,7 @@ export class BonsaiEntity {
   @Column('text', { array: true })
   images: string[];
 
-  @Column()
+  @Column({ default: '' })
   bonsaiCreationDate: Date;
 
   @Column()
@@ -25,4 +25,9 @@ export class BonsaiEntity {
 
   @Column('text', { array: true })
   interventions: string[];
+
+  @BeforeInsert()
+  setDate() {
+    return (this.bonsaiCreationDate = new Date());
+  }
 }

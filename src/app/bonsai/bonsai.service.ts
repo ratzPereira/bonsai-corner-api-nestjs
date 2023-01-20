@@ -1,4 +1,4 @@
-import { BonsaiEntity } from './bonsai.entity';
+import { Bonsai } from './bonsai.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,11 +6,11 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class BonsaiService {
   constructor(
-    @InjectRepository(BonsaiEntity)
-    private bonsaiRepository: Repository<BonsaiEntity>,
+    @InjectRepository(Bonsai)
+    private bonsaiRepository: Repository<Bonsai>,
   ) {}
 
-  async getAll(): Promise<BonsaiEntity[]> {
+  async getAll(): Promise<Bonsai[]> {
     return await this.bonsaiRepository.find();
   }
 }

@@ -2,12 +2,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BonsaiController } from './bonsai.controller';
 import { BonsaiService } from './bonsai.service';
 import { Module } from '@nestjs/common';
-import { BonsaiEntity } from './bonsai.entity';
-
+import { Bonsai } from './bonsai.entity';
 
 @Module({
   providers: [BonsaiService],
-  controllers:[BonsaiController],
-  imports: [TypeOrmModule.forFeature([BonsaiEntity])],
+  controllers: [BonsaiController],
+  imports: [TypeOrmModule.forFeature([Bonsai])],
 })
 export class BonsaiModule {}
