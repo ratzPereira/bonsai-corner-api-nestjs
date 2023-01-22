@@ -1,3 +1,4 @@
+import { LoginResquestDTO } from './dto/login-request.dto';
 import { UserResponseInterface } from './types/user.response.interface';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +7,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { sign } from 'jsonwebtoken';
 import { JWT_SECRET } from '@app/config';
+import {compare} from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -19,7 +21,7 @@ export class UserService {
     });
 
     const userByUsername = await this.userRepository.findOne({
-      where: { email: userdto.username },
+      where: { username: userdto.username },
     });
 
     if (userByEmail || userByUsername)
@@ -32,6 +34,23 @@ export class UserService {
     Object.assign(newUser, userdto);
 
     return await this.userRepository.save(newUser);
+  }
+
+  async login(loginRequesDTO: LoginResquestDTO):Promise<User>{
+
+    const userByEmail = await this.userRepository.findOne({
+        where: { email: loginRequesDTO.email }, select: ['id', 'username', 'password', 'bio','image', 'email']
+        
+      });
+
+      if(!userByEmail) throw new HttpException('Wrong email or password', HttpStatus.BAD_REQUEST);
+
+      const isPasswordCorrect= await compare(loginRequesDTO.password, userByEmail.password);
+
+      if(!isPasswordCorrect) throw new HttpException('Wrong email or password', HttpStatus.BAD_REQUEST);
+
+      delete userByEmail.password
+      return userByEmail;
   }
 
   buildUserResponse(user: User): UserResponseInterface {
