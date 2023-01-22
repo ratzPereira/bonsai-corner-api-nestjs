@@ -1,3 +1,4 @@
+import { UpdateUserDTO } from './dto/update.user.dto';
 import { LoginResquestDTO } from './dto/login-request.dto';
 import { UserResponseInterface } from './types/user.response.interface';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
@@ -65,6 +66,16 @@ export class UserService {
 
   async getUserById(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id } });
+  }
+
+  async updateUser(id: number,updateUserDTO: UpdateUserDTO): Promise<User>{
+    const user = await this.userRepository.findOne({where: {id}})
+
+    if(!user) throw new HttpException('User not found', HttpStatus.BAD_REQUEST)
+
+    Object.assign(user, updateUserDTO)
+
+    return  await this.userRepository.save(user);
   }
 
   buildUserResponse(user: User): UserResponseInterface {
