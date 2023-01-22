@@ -7,7 +7,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { sign } from 'jsonwebtoken';
 import { JWT_SECRET } from '@app/config';
-import {compare} from 'bcrypt';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -36,21 +36,35 @@ export class UserService {
     return await this.userRepository.save(newUser);
   }
 
-  async login(loginRequesDTO: LoginResquestDTO):Promise<User>{
-
+  async login(loginRequesDTO: LoginResquestDTO): Promise<User> {
     const userByEmail = await this.userRepository.findOne({
-        where: { email: loginRequesDTO.email }, select: ['id', 'username', 'password', 'bio','image', 'email']
-        
-      });
+      where: { email: loginRequesDTO.email },
+      select: ['id', 'username', 'password', 'bio', 'image', 'email'],
+    });
 
-      if(!userByEmail) throw new HttpException('Wrong email or password', HttpStatus.BAD_REQUEST);
+    if (!userByEmail)
+      throw new HttpException(
+        'Wrong email or password',
+        HttpStatus.BAD_REQUEST,
+      );
 
-      const isPasswordCorrect= await compare(loginRequesDTO.password, userByEmail.password);
+    const isPasswordCorrect = await compare(
+      loginRequesDTO.password,
+      userByEmail.password,
+    );
 
-      if(!isPasswordCorrect) throw new HttpException('Wrong email or password', HttpStatus.BAD_REQUEST);
+    if (!isPasswordCorrect)
+      throw new HttpException(
+        'Wrong email or password',
+        HttpStatus.BAD_REQUEST,
+      );
 
-      delete userByEmail.password
-      return userByEmail;
+    delete userByEmail.password;
+    return userByEmail;
+  }
+
+  async getUserById(id: number): Promise<User> {
+    return await this.userRepository.findOne({ where: { id } });
   }
 
   buildUserResponse(user: User): UserResponseInterface {

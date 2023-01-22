@@ -22,3 +22,6 @@ content-type: application/json
  }
 }
 
+###GET CURRENT USER
+
+GET http://localhost:4000/api/auth/user
