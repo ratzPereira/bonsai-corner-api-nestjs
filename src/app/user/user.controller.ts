@@ -42,7 +42,7 @@ export class UserController {
   @Get('/user')
   @UseGuards(AuthGuard)
   async getCurrentUser(
-    @UserDecorator('id') user: User,
+    @UserDecorator() user: User,
   ): Promise<UserResponseInterface> {
     return this.userService.buildUserResponse(user);
   }
