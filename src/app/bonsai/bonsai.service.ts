@@ -13,4 +13,8 @@ export class BonsaiService {
   async getAll(): Promise<Bonsai[]> {
     return await this.bonsaiRepository.find();
   }
+
+  async createBonsai(){
+    
+  }
 }

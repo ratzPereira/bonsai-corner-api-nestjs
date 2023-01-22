@@ -1,4 +1,10 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'bonsais' })
 export class Bonsai {
@@ -17,17 +23,23 @@ export class Bonsai {
   @Column('text', { array: true })
   images: string[];
 
-  @Column({ default: '1900-01-01' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   bonsaiCreationDate: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  bonsaiUpdatedDate: Date;
 
   @Column()
   species: string;
 
-  @Column('text', { array: true })
+  @Column('simple-array')
   interventions: string[];
 
-  @BeforeInsert()
-  setDate() {
-    return (this.bonsaiCreationDate = new Date());
+  @Column({ default: 0 })
+  favoritesCount: number;
+
+  @BeforeUpdate()
+  updateTimestamp() {
+    this.bonsaiUpdatedDate = new Date();
   }
 }
