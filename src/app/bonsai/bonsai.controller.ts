@@ -1,6 +1,7 @@
+import { BonsaiResponse } from './types/bonsai.response.interface';
 import { User } from './../user/user.entity';
 import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
-import { Body, UseGuards } from '@nestjs/common/decorators';
+import { Body, Param, UseGuards } from '@nestjs/common/decorators';
 import { Bonsai } from './bonsai.entity';
 import { BonsaiService } from './bonsai.service';
 import { Controller, Get, Post } from '@nestjs/common';
@@ -21,7 +22,21 @@ export class BonsaiController {
   async createBonsai(
     @UserDecorator() currentUser: User,
     @Body('bonsai') createBonsaiDTO: CreateBonsaiDTO,
+  ): Promise<BonsaiResponse> {
+    const bonsai = await this.bonsaiService.createBonsai(
+      currentUser,
+      createBonsaiDTO,
+    );
+    return this.bonsaiService.buildBonsaiResponse(bonsai);
+  }
+
+  @Get('/:id')
+  @UseGuards(AuthGuard)
+  async getBonsaiById(
+    @UserDecorator() currentUser: User,
+    @Param('id') id: number,
   ) {
-    return await this.bonsaiService.createBonsai(currentUser, createBonsaiDTO)
+    const bonsai = await this.bonsaiService.getBonsaiById(currentUser,id);
+    return this.bonsaiService.buildBonsaiResponse(bonsai)
   }
 }

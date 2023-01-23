@@ -1,9 +1,10 @@
 import { User } from './../user/user.entity';
 import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
 import { Bonsai } from './bonsai.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { BonsaiResponse } from './types/bonsai.response.interface';
 
 @Injectable()
 export class BonsaiService {
@@ -31,6 +32,20 @@ export class BonsaiService {
     bonsai.owner = currentUser;
 
     return await this.bonsaiRepository.save(bonsai);
+  }
 
+  async getBonsaiById(user: User, id: number) {
+    const bonsai = await this.bonsaiRepository.findOne({ relations:['owner'], where: { id } });
+
+    if (!bonsai || bonsai.owner.id != user.id)
+      throw new HttpException('Bonsai not found', HttpStatus.NOT_FOUND);
+
+    return bonsai;
+  }
+
+  buildBonsaiResponse(bonsai: Bonsai): BonsaiResponse {
+    return {
+      bonsai,
+    };
   }
 }
