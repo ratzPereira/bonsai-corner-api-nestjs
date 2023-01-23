@@ -4,7 +4,7 @@ import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
 import { Bonsai } from './bonsai.entity';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { BonsaiResponse } from './types/bonsai.response.interface';
 
 @Injectable()
@@ -14,7 +14,17 @@ export class BonsaiService {
     private bonsaiRepository: Repository<Bonsai>,
   ) {}
 
-  async getAll(): Promise<Bonsai[]> {
+  async getAll(currentUser: User): Promise<Bonsai[]> {
+    return await this.bonsaiRepository.find({
+      where: {
+        owner: {
+          id: currentUser.id,
+        },
+      },
+    });
+  }
+
+  async getFeed(): Promise<Bonsai[]> {
     return await this.bonsaiRepository.find();
   }
 

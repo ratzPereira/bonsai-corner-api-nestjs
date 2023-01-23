@@ -39,6 +39,9 @@ export class Bonsai {
   @Column({ default: 0 })
   favoritesCount: number;
 
+  @Column({ default: false })
+  isPublic: boolean;
+
   @ManyToOne(() => User, (user) => user.bonsais, { eager: true })
   owner: User;
 

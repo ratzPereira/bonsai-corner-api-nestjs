@@ -14,8 +14,14 @@ export class BonsaiController {
   constructor(private bonsaiService: BonsaiService) {}
 
   @Get()
-  getAllBonsai(): Promise<Bonsai[]> {
-    return this.bonsaiService.getAll();
+  @UseGuards(AuthGuard)
+  getAllBonsaiForUser(@UserDecorator() currentUser: User,): Promise<Bonsai[]> {
+    return this.bonsaiService.getAll(currentUser);
+  }
+
+  @Get('/feed')
+  getAllBonsaiForFeed(): Promise<Bonsai[]> {
+    return this.bonsaiService.getFeed();
   }
 
   @Post()
