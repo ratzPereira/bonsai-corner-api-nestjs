@@ -1,10 +1,11 @@
 import {
-  BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'bonsais' })
 export class Bonsai {
@@ -37,6 +38,9 @@ export class Bonsai {
 
   @Column({ default: 0 })
   favoritesCount: number;
+
+  @ManyToOne(() =>User, (user)=> user.bonsais)
+  owner: User
 
   @BeforeUpdate()
   updateTimestamp() {

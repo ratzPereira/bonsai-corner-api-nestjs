@@ -1,4 +1,5 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Bonsai } from './../bonsai/bonsai.entity';
+import { BeforeInsert, Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { hash } from 'bcrypt';
 
 @Entity({ name: 'users' })
@@ -20,6 +21,9 @@ export class User {
 
   @Column({ default: '' })
   image: string;
+
+  @OneToOne(()=> Bonsai, (bonsai)=> bonsai.owner)
+  bonsais: Bonsai[]
 
   @BeforeInsert()
   async hashPassword() {
