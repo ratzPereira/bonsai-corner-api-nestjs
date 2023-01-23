@@ -26,7 +26,11 @@ export class BonsaiService {
   }
 
   async getFeed(): Promise<Bonsai[]> {
-    return await this.bonsaiRepository.find();
+    return await this.bonsaiRepository.find({
+      where: {
+        isPublic: true,
+      },
+    });
   }
 
   async updateBonsaiPublic(
