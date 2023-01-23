@@ -116,4 +116,14 @@ export class BonsaiController {
     const bonsai = await this.bonsaiService.addBonsaiToFavorite(currentUser, id);
     return this.bonsaiService.buildBonsaiResponse(bonsai);
   }
+
+  @Delete('/:id/favorite')
+  @UseGuards(AuthGuard)
+  async removeFavorite(
+    @UserDecorator() currentUser: User,
+    @Param('id') id: number,
+  ): Promise<BonsaiResponse> {
+    const bonsai = await this.bonsaiService.removeBonsaiToFavorite(currentUser, id);
+    return this.bonsaiService.buildBonsaiResponse(bonsai);
+  }
 }
