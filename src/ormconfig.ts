@@ -3,11 +3,11 @@ import { DataSource } from 'typeorm';
 
 const config: PostgresConnectionOptions = {
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'bonsaicorner',
-  password: 'admin123',
-  database: 'bonsaicorner',
+  host: process.env.PGHOST || 'localhost',
+  port: parseInt(process.env.PGPORT)  ||  5432,
+  username: process.env.PGUSER ||  'bonsaicorner',
+  password: process.env.PGPASSWORD ||'admin123',
+  database: process.env.PGDATABASE || 'bonsaicorner',
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   synchronize: false,
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
