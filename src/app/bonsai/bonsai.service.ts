@@ -1,3 +1,4 @@
+import { UpdateBonsaiPublicDTO } from './dto/update.bonsai.publicDTO';
 import { UpdateBonsaiDTO } from './dto/update.bonsaiDTO';
 import { User } from './../user/user.entity';
 import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
@@ -26,6 +27,24 @@ export class BonsaiService {
 
   async getFeed(): Promise<Bonsai[]> {
     return await this.bonsaiRepository.find();
+  }
+
+  async updateBonsaiPublic(
+    currentUser: User,
+    updateBonsaiPublicDTO: UpdateBonsaiPublicDTO,
+    id: number,
+  ): Promise<Bonsai> {
+    const bonsai = await this.bonsaiRepository.findOne({
+      relations: ['owner'],
+      where: { id },
+    });
+
+    if (!bonsai || bonsai.owner.id != currentUser.id)
+      throw new HttpException('Bonsai not found', HttpStatus.NOT_FOUND);
+
+    bonsai.isPublic = updateBonsaiPublicDTO.isPublic;
+
+    return await this.bonsaiRepository.save(bonsai);
   }
 
   async createBonsai(
