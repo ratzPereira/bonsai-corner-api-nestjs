@@ -3,7 +3,7 @@ import { UpdateBonsaiDTO } from './dto/update.bonsaiDTO';
 import { BonsaiResponse } from './types/bonsai.response.interface';
 import { User } from './../user/user.entity';
 import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
-import { Body, Param, UseGuards } from '@nestjs/common/decorators';
+import { Body, Param, Query, UseGuards } from '@nestjs/common/decorators';
 import { Bonsai } from './bonsai.entity';
 import { BonsaiService } from './bonsai.service';
 import {
@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '../user/guards/auth.guard';
 import { UserDecorator } from '../user/decorator/user.decorator';
+import { BonsaisResponse } from './types/bonsais.response.interface';
 
 @Controller('/api/bonsai')
 export class BonsaiController {
@@ -26,6 +27,13 @@ export class BonsaiController {
   @UseGuards(AuthGuard)
   getAllBonsaiForUser(@UserDecorator() currentUser: User): Promise<Bonsai[]> {
     return this.bonsaiService.getAll(currentUser);
+  }
+
+  @Get('/feed/custom')
+  getAllBonsaiCustomFeed(
+    @Query() query: any,
+  ): Promise<BonsaisResponse> {
+    return this.bonsaiService.getFeedCustom(query);
   }
 
   @Get('/feed')
