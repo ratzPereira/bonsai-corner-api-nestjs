@@ -5,7 +5,7 @@ import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
 import { Body, Param, UseGuards } from '@nestjs/common/decorators';
 import { Bonsai } from './bonsai.entity';
 import { BonsaiService } from './bonsai.service';
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '../user/guards/auth.guard';
 import { UserDecorator } from '../user/decorator/user.decorator';
 
@@ -20,6 +20,7 @@ export class BonsaiController {
 
   @Post()
   @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
   async createBonsai(
     @UserDecorator() currentUser: User,
     @Body('bonsai') createBonsaiDTO: CreateBonsaiDTO,
@@ -52,6 +53,7 @@ export class BonsaiController {
 
   @Put('/:id')
   @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe())
   async updateBonsaiById(
     @UserDecorator() currentUser: User,
     @Body('bonsai') updateBonsaiDTO: UpdateBonsaiDTO,
