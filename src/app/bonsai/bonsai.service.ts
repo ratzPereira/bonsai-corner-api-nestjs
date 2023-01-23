@@ -35,12 +35,27 @@ export class BonsaiService {
   }
 
   async getBonsaiById(user: User, id: number) {
-    const bonsai = await this.bonsaiRepository.findOne({ relations:['owner'], where: { id } });
+    const bonsai = await this.bonsaiRepository.findOne({
+      relations: ['owner'],
+      where: { id },
+    });
 
     if (!bonsai || bonsai.owner.id != user.id)
       throw new HttpException('Bonsai not found', HttpStatus.NOT_FOUND);
 
     return bonsai;
+  }
+
+  async deleteBonsaiById(user: User, id: number) {
+    const bonsai = await this.bonsaiRepository.findOne({
+      relations: ['owner'],
+      where: { id },
+    });
+
+    if (!bonsai || bonsai.owner.id != user.id)
+      throw new HttpException('Bonsai not found', HttpStatus.NOT_FOUND);
+
+    return await this.bonsaiRepository.delete(id);
   }
 
   buildBonsaiResponse(bonsai: Bonsai): BonsaiResponse {

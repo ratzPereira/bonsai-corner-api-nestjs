@@ -4,7 +4,7 @@ import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
 import { Body, Param, UseGuards } from '@nestjs/common/decorators';
 import { Bonsai } from './bonsai.entity';
 import { BonsaiService } from './bonsai.service';
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Post } from '@nestjs/common';
 import { AuthGuard } from '../user/guards/auth.guard';
 import { UserDecorator } from '../user/decorator/user.decorator';
 
@@ -36,7 +36,16 @@ export class BonsaiController {
     @UserDecorator() currentUser: User,
     @Param('id') id: number,
   ) {
-    const bonsai = await this.bonsaiService.getBonsaiById(currentUser,id);
-    return this.bonsaiService.buildBonsaiResponse(bonsai)
+    const bonsai = await this.bonsaiService.getBonsaiById(currentUser, id);
+    return this.bonsaiService.buildBonsaiResponse(bonsai);
+  }
+
+  @Delete('/:id')
+  @UseGuards(AuthGuard)
+  async deleteBonsaiById(
+    @UserDecorator() currentUser: User,
+    @Param('id') id: number,
+  ) {
+    return this.bonsaiService.deleteBonsaiById(currentUser, id);
   }
 }
