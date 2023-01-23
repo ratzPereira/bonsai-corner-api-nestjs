@@ -25,14 +25,15 @@ export class BonsaiController {
 
   @Get()
   @UseGuards(AuthGuard)
-  getAllBonsaiForUser(@UserDecorator() currentUser: User,@Query() query: any): Promise<BonsaisResponse> {
+  getAllBonsaiForUser(
+    @UserDecorator() currentUser: User,
+    @Query() query: any,
+  ): Promise<BonsaisResponse> {
     return this.bonsaiService.getAll(currentUser, query);
   }
 
   @Get('/feed/custom')
-  getAllBonsaiCustomFeed(
-    @Query() query: any,
-  ): Promise<BonsaisResponse> {
+  getAllBonsaiCustomFeed(@Query() query: any): Promise<BonsaisResponse> {
     return this.bonsaiService.getFeedCustom(query);
   }
 
@@ -103,6 +104,16 @@ export class BonsaiController {
       updateBonsaiDTO,
       id,
     );
+    return this.bonsaiService.buildBonsaiResponse(bonsai);
+  }
+
+  @Post('/:id/favorite')
+  @UseGuards(AuthGuard)
+  async setFavorite(
+    @UserDecorator() currentUser: User,
+    @Param('id') id: number,
+  ): Promise<BonsaiResponse> {
+    const bonsai = await this.bonsaiService.addBonsaiToFavorite(currentUser, id);
     return this.bonsaiService.buildBonsaiResponse(bonsai);
   }
 }

@@ -14,6 +14,8 @@ export class BonsaiService {
   constructor(
     @InjectRepository(Bonsai)
     private bonsaiRepository: Repository<Bonsai>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private dataSource: DataSource,
   ) {}
 
@@ -153,6 +155,40 @@ export class BonsaiService {
 
     return await this.bonsaiRepository.save(bonsai);
   }
+
+  async addBonsaiToFavorite(currentUser: User, id: number): Promise<Bonsai> {
+    const bonsai = await this.bonsaiRepository.findOne({
+      relations: ['owner'],
+      where: { id },
+    });
+
+    const user = await this.userRepository.findOne({
+      where: { id: currentUser.id },
+      relations: ['favorites'],
+    });
+
+    if (!bonsai || bonsai.isPublic === false)
+      throw new HttpException('Bonsai not found or it is private', HttpStatus.NOT_FOUND);
+
+    const isNotFavorited =
+      user.favorites.findIndex(
+        (bonsaiInFavorites) => bonsaiInFavorites.id === bonsai.id,
+      ) === -1;
+
+    if (isNotFavorited) {
+      user.favorites.push(bonsai);
+      bonsai.favoritesCount++;
+
+      await this.userRepository.save(user);
+      await this.bonsaiRepository.save(bonsai);
+
+      return bonsai;
+    }
+
+    return bonsai;
+  }
+
+  /// helper
 
   buildBonsaiResponse(bonsai: Bonsai): BonsaiResponse {
     return {

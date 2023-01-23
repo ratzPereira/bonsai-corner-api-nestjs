@@ -1,3 +1,4 @@
+import { User } from './../user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BonsaiController } from './bonsai.controller';
 import { BonsaiService } from './bonsai.service';
@@ -7,6 +8,8 @@ import { Bonsai } from './bonsai.entity';
 @Module({
   providers: [BonsaiService],
   controllers: [BonsaiController],
-  imports: [TypeOrmModule.forFeature([Bonsai])],
+  imports: [
+    TypeOrmModule.forFeature([Bonsai, User]),
+  ],
 })
 export class BonsaiModule {}
