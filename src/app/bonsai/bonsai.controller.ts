@@ -25,8 +25,8 @@ export class BonsaiController {
 
   @Get()
   @UseGuards(AuthGuard)
-  getAllBonsaiForUser(@UserDecorator() currentUser: User): Promise<Bonsai[]> {
-    return this.bonsaiService.getAll(currentUser);
+  getAllBonsaiForUser(@UserDecorator() currentUser: User,@Query() query: any): Promise<BonsaisResponse> {
+    return this.bonsaiService.getAll(currentUser, query);
   }
 
   @Get('/feed/custom')

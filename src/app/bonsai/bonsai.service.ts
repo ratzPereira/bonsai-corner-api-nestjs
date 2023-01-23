@@ -1,4 +1,3 @@
-import { compare } from 'bcrypt';
 import { BonsaisResponse } from './types/bonsais.response.interface';
 import { UpdateBonsaiPublicDTO } from './dto/update.bonsai.publicDTO';
 import { UpdateBonsaiDTO } from './dto/update.bonsaiDTO';
@@ -7,7 +6,7 @@ import { CreateBonsaiDTO } from './dto/create.bonsaiDTO';
 import { Bonsai } from './bonsai.entity';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BonsaiResponse } from './types/bonsai.response.interface';
 
 @Injectable()
@@ -18,14 +17,28 @@ export class BonsaiService {
     private dataSource: DataSource,
   ) {}
 
-  async getAll(currentUser: User): Promise<Bonsai[]> {
-    return await this.bonsaiRepository.find({
-      where: {
-        owner: {
-          id: currentUser.id,
-        },
-      },
-    });
+  async getAll(currentUser: User, query: any): Promise<BonsaisResponse> {
+    const queryBuilder = this.dataSource
+      .getRepository(Bonsai)
+      .createQueryBuilder('bonsais')
+      .leftJoinAndSelect('bonsais.owner', 'owner')
+      .andWhere('owner.username = :username', {
+        username: currentUser.username,
+      });
+
+    const bonsaisCount = await queryBuilder.getCount();
+
+    if (query.limit) queryBuilder.limit(query.limit);
+
+    if (query.offset) queryBuilder.offset(query.offset);
+
+    if (query.species)
+      queryBuilder.andWhere('bonsais.species LIKE :species', {
+        species: `%${query.species}`,
+      });
+
+    const bonsais = await queryBuilder.getMany();
+    return { bonsais, bonsaisCount };
   }
 
   async getFeed(): Promise<Bonsai[]> {
