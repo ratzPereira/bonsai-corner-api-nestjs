@@ -25,6 +25,7 @@
     "db:migrate": "npm run typeorm migration:run"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
@@ -36,6 +37,7 @@
     "cross-env": "^7.0.3",
     "jsonwebtoken": "^9.0.0",
     "module-alias": "^2.2.2",
+    "nodemailer": "^6.9.0",
     "nodemon": "^2.0.20",
     "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",

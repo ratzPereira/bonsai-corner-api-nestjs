@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Bonsai } from './../bonsai/bonsai.entity';
 import {
   BeforeInsert,
@@ -19,6 +20,7 @@ export class User {
   email: string;
 
   @Column({ select: false })
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @Column()

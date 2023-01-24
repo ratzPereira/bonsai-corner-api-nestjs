@@ -1,3 +1,4 @@
+import { EmailService } from './../mailer/email.service';
 import { UpdateUserDTO } from './dto/update.user.dto';
 import { LoginResquestDTO } from './dto/login-request.dto';
 import { UserResponseInterface } from './types/user.response.interface';
@@ -14,6 +15,7 @@ import { compare } from 'bcrypt';
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    private emailService: EmailService,
   ) {}
 
   async createUser(userdto: CreateUserDTO): Promise<User> {
@@ -34,7 +36,15 @@ export class UserService {
     const newUser = new User();
     Object.assign(newUser, userdto);
 
-    return await this.userRepository.save(newUser);
+    await this.emailService.sendEmail(
+      userdto.email,
+      'Welcome to bonsai corner',
+      `Hello ${userdto.username} thanks and welcome to Bonsai corner. Glad we have you here.`,
+    );
+
+    const userSaved = await this.userRepository.save(newUser);
+    delete userSaved.password;
+    return userSaved;
   }
 
   async login(loginRequesDTO: LoginResquestDTO): Promise<User> {
@@ -68,14 +78,15 @@ export class UserService {
     return await this.userRepository.findOne({ where: { id } });
   }
 
-  async updateUser(id: number,updateUserDTO: UpdateUserDTO): Promise<User>{
-    const user = await this.userRepository.findOne({where: {id}})
+  async updateUser(id: number, updateUserDTO: UpdateUserDTO): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
 
-    if(!user) throw new HttpException('User not found', HttpStatus.BAD_REQUEST)
+    if (!user)
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
 
-    Object.assign(user, updateUserDTO)
+    Object.assign(user, updateUserDTO);
 
-    return  await this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   buildUserResponse(user: User): UserResponseInterface {

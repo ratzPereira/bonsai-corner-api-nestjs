@@ -1,3 +1,4 @@
+import { EmailService } from './../mailer/email.service';
 import { AuthMiddleware } from './middleware/auth.middleware';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
@@ -8,7 +9,7 @@ import { AuthGuard } from './guards/auth.guard';
 
 @Module({
   controllers: [UserController],
-  providers: [UserService, AuthGuard],
+  providers: [UserService, AuthGuard, EmailService],
   imports: [TypeOrmModule.forFeature([User])],
   exports:[UserService]
 })
