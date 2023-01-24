@@ -1,6 +1,6 @@
-import { Bonsai } from './../bonsai.entity';
+import { BonsaiType } from './bonsai.type';
 export interface BonsaisResponse {
 
-    bonsais: Bonsai[]
+    bonsais: BonsaiType[]
     bonsaisCount: number
 }

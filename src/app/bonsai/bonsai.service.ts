@@ -51,7 +51,8 @@ export class BonsaiService {
     });
   }
 
-  async getFeedCustom(query: any): Promise<BonsaisResponse> {
+  async getFeedCustom(currentUser: User, query: any): Promise<BonsaisResponse> {
+    //TODO: Fix bonsai count
     const queryBuilder = this.dataSource
       .getRepository(Bonsai)
       .createQueryBuilder('bonsais')
@@ -75,8 +76,39 @@ export class BonsaiService {
       });
     }
 
+    if (query.favorited) {
+      const owner = await this.userRepository.findOne({
+        where: {
+          username: query.favorited,
+        },
+        relations: ['favorites'],
+      });
+
+      const ids = owner.favorites.map((el) => el.id);
+      if (ids.length > 0) {
+        queryBuilder.andWhere('bonsais.id IN (:...ids)', { ids });
+      } else {
+        queryBuilder.andWhere('1=0');
+      }
+    }
+
+    let favoriteIds: number[] = [];
+
+    if (currentUser.id) {
+      const user = await this.userRepository.findOne({
+        where: { id: currentUser.id },
+        relations: ['favorites'],
+      });
+      favoriteIds = user.favorites.map((favorite) => favorite.id)
+    }
+
     const bonsais = await queryBuilder.getMany();
-    return { bonsais, bonsaisCount };
+
+    const bonsaisWithFavorited = bonsais.map((bonsai)=> {
+      const favorited = favoriteIds.includes(bonsai.id);
+      return {...bonsai, favorited}
+    })
+    return { bonsais: bonsaisWithFavorited, bonsaisCount };
   }
 
   async updateBonsaiPublic(
@@ -167,8 +199,11 @@ export class BonsaiService {
       relations: ['favorites'],
     });
 
-    if (!bonsai || (bonsai.isPublic === false && bonsai.owner.id  != user.id))
-      throw new HttpException('Bonsai not found or it is private', HttpStatus.NOT_FOUND);
+    if (!bonsai || (bonsai.isPublic === false && bonsai.owner.id != user.id))
+      throw new HttpException(
+        'Bonsai not found or it is private',
+        HttpStatus.NOT_FOUND,
+      );
 
     const isNotFavorited =
       user.favorites.findIndex(
@@ -181,15 +216,12 @@ export class BonsaiService {
 
       await this.userRepository.save(user);
       await this.bonsaiRepository.save(bonsai);
-
-      return bonsai;
     }
 
     return bonsai;
   }
 
   async removeBonsaiToFavorite(currentUser: User, id: number): Promise<Bonsai> {
-
     const bonsai = await this.bonsaiRepository.findOne({
       relations: ['owner'],
       where: { id },
@@ -201,27 +233,25 @@ export class BonsaiService {
     });
 
     if (!bonsai)
-      throw new HttpException('Bonsai not found or it is private', HttpStatus.NOT_FOUND);
-
-    const bonsaiIndex =
-      user.favorites.findIndex(
-        (bonsaiInFavorites) => bonsaiInFavorites.id === bonsai.id,
+      throw new HttpException(
+        'Bonsai not found or it is private',
+        HttpStatus.NOT_FOUND,
       );
 
-      if(bonsaiIndex >=0){
-        user.favorites.splice(bonsaiIndex, 1)
-        bonsai.favoritesCount--;
+    const bonsaiIndex = user.favorites.findIndex(
+      (bonsaiInFavorites) => bonsaiInFavorites.id === bonsai.id,
+    );
 
-        await this.userRepository.save(user);
-        await this.bonsaiRepository.save(bonsai);
-  
-        return bonsai;
-      }
+    if (bonsaiIndex >= 0) {
+      user.favorites.splice(bonsaiIndex, 1);
+      bonsai.favoritesCount--;
 
-      return bonsai;
+      await this.userRepository.save(user);
+      await this.bonsaiRepository.save(bonsai);
+    }
+
+    return bonsai;
   }
-
-
 
   /// helper
 

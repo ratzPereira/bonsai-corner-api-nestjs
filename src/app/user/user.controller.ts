@@ -1,7 +1,6 @@
 import { UpdateUserDTO } from './dto/update.user.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { User } from './user.entity';
-import { ExpressRequest } from './types/express.request.interface';
 import { LoginResquestDTO } from './dto/login-request.dto';
 import { UserResponseInterface } from './types/user.response.interface';
 import { UserService } from './user.service';

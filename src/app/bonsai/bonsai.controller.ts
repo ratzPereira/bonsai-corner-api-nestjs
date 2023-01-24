@@ -33,8 +33,8 @@ export class BonsaiController {
   }
 
   @Get('/feed/custom')
-  getAllBonsaiCustomFeed(@Query() query: any): Promise<BonsaisResponse> {
-    return this.bonsaiService.getFeedCustom(query);
+  getAllBonsaiCustomFeed(@Query() query: any,@UserDecorator() currentUser: User,): Promise<BonsaisResponse> {
+    return this.bonsaiService.getFeedCustom(currentUser, query);
   }
 
   @Get('/feed')
