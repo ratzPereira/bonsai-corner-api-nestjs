@@ -18,12 +18,21 @@ import {
 import { AuthGuard } from '../user/guards/auth.guard';
 import { UserDecorator } from '../user/decorator/user.decorator';
 import { BonsaisResponse } from './types/bonsais.response.interface';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('bonsai')
 @Controller('/api/bonsai')
 export class BonsaiController {
   constructor(private bonsaiService: BonsaiService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all user bonsais' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   getAllBonsaiForUser(
     @UserDecorator() currentUser: User,
@@ -33,16 +42,20 @@ export class BonsaiController {
   }
 
   @Get('/feed/custom')
+  @ApiOperation({ summary: 'Get feed with custom query' })
   getAllBonsaiCustomFeed(@Query() query: any,@UserDecorator() currentUser: User,): Promise<BonsaisResponse> {
     return this.bonsaiService.getFeedCustom(currentUser, query);
   }
 
   @Get('/feed')
+  @ApiOperation({ summary: 'Get feed' })
   getAllBonsaiForFeed(): Promise<Bonsai[]> {
     return this.bonsaiService.getFeed();
   }
 
   @Put('/public/:id')
+  @ApiOperation({ summary: 'Update if bonsai is public or private' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
   async updateIsPublicBonsai(
@@ -59,11 +72,13 @@ export class BonsaiController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create new bonsai' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
   async createBonsai(
     @UserDecorator() currentUser: User,
-    @Body('bonsai') createBonsaiDTO: CreateBonsaiDTO,
+    @Body() createBonsaiDTO: CreateBonsaiDTO,
   ): Promise<BonsaiResponse> {
     const bonsai = await this.bonsaiService.createBonsai(
       currentUser,
@@ -73,6 +88,8 @@ export class BonsaiController {
   }
 
   @Get('/:id')
+  @ApiOperation({ summary: 'Get bonsai by ID' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async getBonsaiById(
     @UserDecorator() currentUser: User,
@@ -83,6 +100,8 @@ export class BonsaiController {
   }
 
   @Delete('/:id')
+  @ApiOperation({ summary: 'Delete bonsai by ID' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async deleteBonsaiById(
     @UserDecorator() currentUser: User,
@@ -92,11 +111,13 @@ export class BonsaiController {
   }
 
   @Put('/:id')
+  @ApiOperation({ summary: 'Update bonsai by ID' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe())
   async updateBonsaiById(
     @UserDecorator() currentUser: User,
-    @Body('bonsai') updateBonsaiDTO: UpdateBonsaiDTO,
+    @Body() updateBonsaiDTO: UpdateBonsaiDTO,
     @Param('id') id: number,
   ): Promise<BonsaiResponse> {
     const bonsai = await this.bonsaiService.updateBonsai(
@@ -108,6 +129,8 @@ export class BonsaiController {
   }
 
   @Post('/:id/favorite')
+  @ApiOperation({ summary: 'Set bonsai as favorite' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async setFavorite(
     @UserDecorator() currentUser: User,
@@ -118,6 +141,8 @@ export class BonsaiController {
   }
 
   @Delete('/:id/favorite')
+  @ApiOperation({ summary: 'Remove bonsai from favorite' })
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   async removeFavorite(
     @UserDecorator() currentUser: User,
