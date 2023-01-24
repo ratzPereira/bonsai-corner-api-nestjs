@@ -1,14 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@app/app.module';
 
-// if(!process.env.IS_TS_NODE){
-//   require('module-alias/register')
-// }
+if(!process.env.IS_TS_NODE){
+  require('module-alias/register')
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  console.log(process.env.PORT)
-  console.log(process.env.MYPORT)
-  await app.listen(process.env.MYPORT || 4000);
+  const PORT = process.env.PORT || 4000;
+  await app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 bootstrap();
