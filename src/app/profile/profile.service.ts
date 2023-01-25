@@ -1,3 +1,4 @@
+import { Follow } from './follow.entity';
 import { ProfileResponse } from './types/profile.response.interface';
 import { ProfileType } from './types/profile.type';
 import { User } from './../user/user.entity';
@@ -9,6 +10,7 @@ import { Repository } from 'typeorm';
 export class ProfileService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Follow) private followRepository: Repository<Follow>,
   ) {}
 
   async getProfile(currentUser: User, username: string): Promise<ProfileType> {
@@ -19,12 +21,37 @@ export class ProfileService {
     return { ...user, following: false };
   }
 
-  followUser(currentUser: User, username: string) {}
+  async followUser(currentUser: User, username: string): Promise<ProfileType> {
+    const user = await this.userRepository.findOne({ where: { username } });
 
-  unfollowUser(currentUser: User, username: string) {}
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    if (currentUser.id === user.id)
+      throw new HttpException(
+        'You cant follow yourself',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const follow = await this.followRepository.findOne({
+      where: {
+        followerId: currentUser.id,
+        followingId: user.id,
+      },
+    });
+
+    if (!follow) {
+      const followToCreate = new Follow();
+      followToCreate.followingId = user.id;
+      followToCreate.followerId = currentUser.id;
+      await this.followRepository.save(followToCreate);
+    }
+
+    return { ...user, following: true };
+  }
+
+  async unfollowUser(currentUser: User, username: string): Promise<any> {}
 
   buildProfileResponse(profile: ProfileType): ProfileResponse {
-
     delete profile.email;
     return { profile };
   }

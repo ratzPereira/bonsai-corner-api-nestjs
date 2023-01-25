@@ -27,7 +27,11 @@ export class ProfileController {
   async followUser(
     @UserDecorator() currentUser: User,
     @Param('username') username: string,
-  ) {}
+  ) {
+
+    const profile = await this.profileService.followUser(currentUser, username);
+    return this.profileService.buildProfileResponse(profile);
+  }
 
   @Delete('/:username/follow')
   @ApiOperation({ summary: 'Unfollow User' })
@@ -36,5 +40,9 @@ export class ProfileController {
   async unfollowUser(
     @UserDecorator() currentUser: User,
     @Param('username') username: string,
-  ) {}
+  ) {
+
+    const profile = await this.profileService.unfollowUser(currentUser, username);
+    return this.profileService.buildProfileResponse(profile);
+  }
 }
