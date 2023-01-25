@@ -1,3 +1,4 @@
+import { Follow } from './../profile/follow.entity';
 import { BonsaisResponse } from './types/bonsais.response.interface';
 import { UpdateBonsaiPublicDTO } from './dto/update.bonsai.publicDTO';
 import { UpdateBonsaiDTO } from './dto/update.bonsaiDTO';
@@ -16,6 +17,7 @@ export class BonsaiService {
     private bonsaiRepository: Repository<Bonsai>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Follow) private followRepository: Repository<Follow>,
     private dataSource: DataSource,
   ) {}
 
@@ -99,16 +101,46 @@ export class BonsaiService {
         where: { id: currentUser.id },
         relations: ['favorites'],
       });
-      favoriteIds = user.favorites.map((favorite) => favorite.id)
+      favoriteIds = user.favorites.map((favorite) => favorite.id);
     }
 
     const bonsais = await queryBuilder.getMany();
 
-    const bonsaisWithFavorited = bonsais.map((bonsai)=> {
+    const bonsaisWithFavorited = bonsais.map((bonsai) => {
       const favorited = favoriteIds.includes(bonsai.id);
-      return {...bonsai, favorited}
-    })
+      return { ...bonsai, favorited };
+    });
     return { bonsais: bonsaisWithFavorited, bonsaisCount };
+  }
+
+  async getFollowersFeed(
+    query: any,
+    currentUser: User,
+  ): Promise<BonsaisResponse> {
+    const users = await this.followRepository.find({
+      where: {
+        followerId: currentUser.id,
+      },
+    });
+
+    if (!users.length) return { bonsais: [], bonsaisCount: 0 };
+
+    const followingUserIds = users.map((follow) => follow.followingId);
+
+    const queryBuilder = this.dataSource
+      .getRepository(Bonsai)
+      .createQueryBuilder('bonsais')
+      .leftJoinAndSelect('bonsais.owner', 'owner')
+      .where('bonsais.ownerId IN (:...ids)', { ids: followingUserIds });
+
+    queryBuilder.orderBy('bonsais.bonsaiCreationDate', 'DESC');
+
+    if (query.limit) queryBuilder.limit(query.limit);
+    if (query.offset) queryBuilder.offset(query.offset);
+
+    const bonsais = await queryBuilder.getMany();
+
+    return { bonsais, bonsaisCount: bonsais.length };
   }
 
   async updateBonsaiPublic(

@@ -43,7 +43,10 @@ export class BonsaiController {
 
   @Get('/feed/custom')
   @ApiOperation({ summary: 'Get feed with custom query' })
-  getAllBonsaiCustomFeed(@Query() query: any,@UserDecorator() currentUser: User,): Promise<BonsaisResponse> {
+  getAllBonsaiCustomFeed(
+    @Query() query: any,
+    @UserDecorator() currentUser: User,
+  ): Promise<BonsaisResponse> {
     return this.bonsaiService.getFeedCustom(currentUser, query);
   }
 
@@ -51,6 +54,17 @@ export class BonsaiController {
   @ApiOperation({ summary: 'Get feed' })
   getAllBonsaiForFeed(): Promise<Bonsai[]> {
     return this.bonsaiService.getFeed();
+  }
+
+  @Get('/feed/followers')
+  @ApiOperation({ summary: 'Get feed from your followed users' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  getAllBonsaiForFollowersFeed(
+    @Query() query: any,
+    @UserDecorator() currentUser: User,
+  ) {
+    return this.bonsaiService.getFollowersFeed(query, currentUser);
   }
 
   @Put('/public/:id')
@@ -136,7 +150,10 @@ export class BonsaiController {
     @UserDecorator() currentUser: User,
     @Param('id') id: number,
   ): Promise<BonsaiResponse> {
-    const bonsai = await this.bonsaiService.addBonsaiToFavorite(currentUser, id);
+    const bonsai = await this.bonsaiService.addBonsaiToFavorite(
+      currentUser,
+      id,
+    );
     return this.bonsaiService.buildBonsaiResponse(bonsai);
   }
 
@@ -148,7 +165,10 @@ export class BonsaiController {
     @UserDecorator() currentUser: User,
     @Param('id') id: number,
   ): Promise<BonsaiResponse> {
-    const bonsai = await this.bonsaiService.removeBonsaiToFavorite(currentUser, id);
+    const bonsai = await this.bonsaiService.removeBonsaiToFavorite(
+      currentUser,
+      id,
+    );
     return this.bonsaiService.buildBonsaiResponse(bonsai);
   }
 }
