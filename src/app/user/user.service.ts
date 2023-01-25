@@ -19,6 +19,10 @@ export class UserService {
   ) {}
 
   async createUser(userdto: CreateUserDTO): Promise<User> {
+
+    const errorResponse = {
+      errors: {}
+    }
     const userByEmail = await this.userRepository.findOne({
       where: { email: userdto.email },
     });
@@ -27,9 +31,12 @@ export class UserService {
       where: { username: userdto.username },
     });
 
+    if(userByEmail) errorResponse.errors['email'] = 'has already been taken'
+    if(userByUsername) errorResponse.errors['username'] = 'has already been taken'
+
     if (userByEmail || userByUsername)
       throw new HttpException(
-        'Email or Username already exist!',
+        errorResponse,
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
 
@@ -48,6 +55,13 @@ export class UserService {
   }
 
   async login(loginRequesDTO: LoginResquestDTO): Promise<User> {
+
+    const errorResponse = {
+      errors: {
+        'email or password': 'is incorrect'
+      }
+    }
+
     const userByEmail = await this.userRepository.findOne({
       where: { email: loginRequesDTO.email },
       select: ['id', 'username', 'password', 'bio', 'image', 'email'],
@@ -55,8 +69,8 @@ export class UserService {
 
     if (!userByEmail)
       throw new HttpException(
-        'Wrong email or password',
-        HttpStatus.BAD_REQUEST,
+        errorResponse,
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
 
     const isPasswordCorrect = await compare(
@@ -66,8 +80,8 @@ export class UserService {
 
     if (!isPasswordCorrect)
       throw new HttpException(
-        'Wrong email or password',
-        HttpStatus.BAD_REQUEST,
+        errorResponse,
+        HttpStatus.UNPROCESSABLE_ENTITY,
       );
 
     delete userByEmail.password;

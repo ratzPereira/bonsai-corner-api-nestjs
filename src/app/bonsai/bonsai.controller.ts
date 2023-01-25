@@ -1,3 +1,4 @@
+import { BackendValidationPipe } from './../shared/pipes/backendValidation.pipe';
 import { UpdateBonsaiPublicDTO } from './dto/update.bonsai.publicDTO';
 import { UpdateBonsaiDTO } from './dto/update.bonsaiDTO';
 import { BonsaiResponse } from './types/bonsai.response.interface';
@@ -13,7 +14,6 @@ import {
   Post,
   Put,
   UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '../user/guards/auth.guard';
 import { UserDecorator } from '../user/decorator/user.decorator';
@@ -21,7 +21,6 @@ import { BonsaisResponse } from './types/bonsais.response.interface';
 import {
   ApiBearerAuth,
   ApiOperation,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -71,7 +70,7 @@ export class BonsaiController {
   @ApiOperation({ summary: 'Update if bonsai is public or private' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async updateIsPublicBonsai(
     @UserDecorator() currentUser: User,
     @Body() updateBonsaiPublicDTO: UpdateBonsaiPublicDTO,
@@ -89,7 +88,7 @@ export class BonsaiController {
   @ApiOperation({ summary: 'Create new bonsai' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async createBonsai(
     @UserDecorator() currentUser: User,
     @Body() createBonsaiDTO: CreateBonsaiDTO,
@@ -128,7 +127,7 @@ export class BonsaiController {
   @ApiOperation({ summary: 'Update bonsai by ID' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async updateBonsaiById(
     @UserDecorator() currentUser: User,
     @Body() updateBonsaiDTO: UpdateBonsaiDTO,

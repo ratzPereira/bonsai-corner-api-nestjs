@@ -1,3 +1,4 @@
+import { BackendValidationPipe } from './../shared/pipes/backendValidation.pipe';
 import { UpdateUserDTO } from './dto/update.user.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { User } from './user.entity';
@@ -12,7 +13,7 @@ import {
   UseGuards,
   Put,
 } from '@nestjs/common/decorators';
-import { Controller, ValidationPipe } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UserDecorator } from './decorator/user.decorator';
 import {
@@ -30,7 +31,7 @@ export class UserController {
 
   @Post()
   @ApiOperation({ summary: 'Register new user' })
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async createUser(
     @Body() createUserDTO: CreateUserDTO,
   ): Promise<UserResponseInterface> {
@@ -42,7 +43,7 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @UsePipes(new ValidationPipe())
+  @UsePipes(new BackendValidationPipe())
   async loginUser(
     @Body() loginRequestDTO: LoginResquestDTO,
   ): Promise<UserResponseInterface> {
