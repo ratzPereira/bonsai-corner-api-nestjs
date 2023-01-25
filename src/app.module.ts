@@ -1,3 +1,4 @@
+import { ProfileModule } from './app/profile/profile.module';
 import { AuthMiddleware } from './app/user/middleware/auth.middleware';
 import { BonsaiModule } from '@app/app/bonsai/bonsai.module';
 import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     TypeOrmModule.forRoot(ormconfig.options),
     BonsaiModule,
     UserModule,
+    ProfileModule,
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
