@@ -9,9 +9,11 @@ if (!process.env.IS_TS_NODE) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-app.enableCors({
-  origin: "http://localhost:4200/"
-})
+  app.enableCors({
+    allowedHeaders: ['content-type'],
+    origin: 'http://localhost:4200',
+    credentials: true,
+  });
   const config = new DocumentBuilder()
     .setTitle('Bonsai Corner')
     .setDescription('Bonsai Social media')
