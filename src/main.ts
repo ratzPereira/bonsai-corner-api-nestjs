@@ -9,7 +9,9 @@ if (!process.env.IS_TS_NODE) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+app.enableCors({
+  origin: "http://localhost:4200/"
+})
   const config = new DocumentBuilder()
     .setTitle('Bonsai Corner')
     .setDescription('Bonsai Social media')
@@ -19,7 +21,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
+  
   const PORT = process.env.PORT || 4000;
   await app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
