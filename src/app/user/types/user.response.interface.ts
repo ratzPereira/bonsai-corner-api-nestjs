@@ -1,4 +1,11 @@
 import { UserType } from './user.type';
 export interface UserResponseInterface {
-  user: UserType & { token: string };
+
+
+  id: number;
+  email: string;
+  username: string;
+  bio: string;
+  image: string;
+    token: string ;
 }

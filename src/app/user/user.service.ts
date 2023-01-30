@@ -104,12 +104,8 @@ export class UserService {
   }
 
   buildUserResponse(user: User): UserResponseInterface {
-    return {
-      user: {
-        ...user,
-        token: this.generateJwt(user),
-      },
-    };
+    // eslint-disable-next-line prettier/prettier
+    return {...user, token: this.generateJwt(user)};
   }
 
   generateJwt(user: User): string {
