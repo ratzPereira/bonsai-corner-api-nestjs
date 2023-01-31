@@ -8,14 +8,11 @@ if (!process.env.IS_TS_NODE) {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
   app.enableCors({
-    allowedHeaders: ['content-type'],
+    allowedHeaders: ['content-type, Authorization'],
     origin: '*',
-    credentials: true,
     methods: 'GET, PUT, POST, DELETE',
-    exposedHeaders: 'Content-Type, Authorization',
-    preflightContinue: false
   });
   const config = new DocumentBuilder()
     .setTitle('Bonsai Corner')
