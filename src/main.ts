@@ -11,10 +11,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.enableCors({
     allowedHeaders: ['content-type'],
-    origin: 'http://localhost:4200',
+    origin: '*',
     credentials: true,
     methods: 'GET, PUT, POST, DELETE',
     exposedHeaders: 'Content-Type, Authorization',
+    preflightContinue: false
   });
   const config = new DocumentBuilder()
     .setTitle('Bonsai Corner')
