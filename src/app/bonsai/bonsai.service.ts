@@ -45,12 +45,16 @@ export class BonsaiService {
     return { bonsais, bonsaisCount };
   }
 
-  async getFeed(): Promise<Bonsai[]> {
-    return await this.bonsaiRepository.find({
+  async getFeed(): Promise<BonsaisResponse> {
+    const bonsais = await this.bonsaiRepository.find({
       where: {
         isPublic: true,
       },
     });
+
+    const bonsaisCount = bonsais.length;
+
+    return { bonsais, bonsaisCount };
   }
 
   async getFeedCustom(currentUser: User, query: any): Promise<BonsaisResponse> {

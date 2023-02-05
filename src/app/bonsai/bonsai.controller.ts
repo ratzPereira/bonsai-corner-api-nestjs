@@ -40,7 +40,7 @@ export class BonsaiController {
 
   @Get('/feed')
   @ApiOperation({ summary: 'Get feed' })
-  getAllBonsaiForFeed(): Promise<Bonsai[]> {
+  getAllBonsaiForFeed(): Promise<BonsaisResponse> {
     return this.bonsaiService.getFeed();
   }
 

@@ -9,8 +9,6 @@ import { Bonsai } from './bonsai.entity';
 @Module({
   providers: [BonsaiService],
   controllers: [BonsaiController],
-  imports: [
-    TypeOrmModule.forFeature([Bonsai, User, Follow]),
-  ],
+  imports: [TypeOrmModule.forFeature([Bonsai, User, Follow])],
 })
 export class BonsaiModule {}
