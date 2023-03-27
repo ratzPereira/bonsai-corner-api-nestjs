@@ -77,4 +77,22 @@ export class UserController {
     );
     return this.userService.buildUserResponse(user);
   }
+
+  @Get('/user/followers')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get the followers fot the user' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UseGuards(AuthGuard)
+  async getUserFollowers(@UserDecorator() currentUser: User){
+    return this.userService.getFollowers(currentUser);
+  }
+
+  @Get('/user/followings')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get the followings fot the user' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UseGuards(AuthGuard)
+  async getUserFollowings(@UserDecorator() currentUser: User){
+    return this.userService.getFollowings(currentUser);
+  }
 }
