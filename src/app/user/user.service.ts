@@ -121,10 +121,12 @@ export class UserService {
     
     const results = await queryBuilder
       .where('follows.followerId = :followerId', { followerId })
-      .select('follows.followingId', 'followingId')
+      .leftJoinAndSelect(User, 'user', 'user.id = follows.followingId')
+      .select('user.username', 'username')
       .getRawMany();
-    const ids: string[] = results.map(result => result.followingId);
-    return {followings: ids}
+
+    const usernames: string[] = results.map(result => result.username);
+    return {followings: usernames}
   }
 
   async getFollowers(currentUser: User): Promise<UserFollowers>{
@@ -140,10 +142,12 @@ export class UserService {
     
     const results = await queryBuilder
       .where('follows.followingId = :followingId', { followingId })
-      .select('follows.followerId', 'followerId')
+      .leftJoinAndSelect(User, 'user', 'user.id = follows.followerId')
+      .select('user.username', 'username')
       .getRawMany();
-    const ids: string[] = results.map(result => result.followerId);
-    return {followers: ids}
+
+    const usernames: string[] = results.map(result => result.username);
+    return {followers: usernames}
   }
 
   buildUserResponse(user: User): UserResponseInterface {
